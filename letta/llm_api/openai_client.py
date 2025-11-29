@@ -398,7 +398,11 @@ class OpenAIClient(LLMClientBase):
             data.model = "memgpt-openai"
 
         request_data = data.model_dump(exclude_unset=True)
-        # print("responses request data", request_data)
+        # Strip None values for tools/tool_choice - vLLM Responses API doesn't accept None
+        if request_data.get("tools") is None:
+            request_data.pop("tools", None)
+        if request_data.get("tool_choice") is None:
+            request_data.pop("tool_choice", None)
         return request_data
 
     @trace_method
