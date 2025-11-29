@@ -154,6 +154,9 @@ def requires_auto_tool_choice(llm_config: LLMConfig) -> bool:
 
 def use_responses_api(llm_config: LLMConfig) -> bool:
     # TODO can opt in all reasoner models to use the Responses API
+    # gpt-oss models require the Responses API for tool calling
+    if "gpt-oss" in llm_config.model:
+        return True
     return is_openai_reasoning_model(llm_config.model)
 
 
