@@ -639,7 +639,14 @@ class OpenAIClient(LLMClientBase):
             reasoning_summary_parts = None
             reasoning_content_signature = None
             tool_calls = None
-            finish_reason = "stop" if (response_data.get("status") == "completed") else None
+            # Map Responses API status to Chat Completions finish_reason
+            status = response_data.get("status", "completed")
+            if status == "completed":
+                finish_reason = "stop"
+            elif status == "incomplete":
+                finish_reason = "length"  # Hit token limit
+            else:
+                finish_reason = "stop"  # Fallback for failed/unknown
 
             # Optionally capture reasoning presence
             found_reasoning = False
